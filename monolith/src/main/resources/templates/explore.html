@@ -1,9 +1,22 @@
 <!DOCTYPE html>
-<html>
-<head></head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>NearMe</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
 <body>
-<div>
-    <h1>explore page</h1>
-</div>
+    <div>
+        <h1>Explore what's happening!</h1>
+    </div>
+    <div>
+        <p th:text="${name}"></p>
+        <form>
+            <label for="dropDownList">Choose your city:</label>
+            <select class="form-control" id="dropDownList">
+                <option th:each="city : ${cities}" th:value="${city}" th:text="${city}"></option>
+            </select>
+            <input type="submit">
+        </form>
+    </div>
 </body>
 </html>
