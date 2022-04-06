@@ -7,12 +7,14 @@
 <body>
     <div>
         <h1>Explore what's happening!</h1>
+        <h1 th:text="${user_city}"></h1>
     </div>
     <div>
-        <p th:text="${name}"></p>
-        <form>
-            <label for="dropDownList">Choose your city:</label>
-            <select class="form-control" id="dropDownList">
+        <!--<p th:text="${name}"></p>-->
+        <!-- Form finds bean cityselection and will update field city based on input -->
+        <form method="post" th:object="${cityselection}">
+            <label for="citySelector">Select your city:</label>
+            <select id="citySelector" th:field="*{city}">
                 <option th:each="city : ${cities}" th:value="${city}" th:text="${city}"></option>
             </select>
             <input type="submit">
