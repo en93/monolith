@@ -14,9 +14,10 @@ public class ExploreController {
 
     @GetMapping
     public String explore(Model model){
-//        model.addAttribute("name", "Ian");
         model.addAttribute("cities", CityRepository.getAllCities());
-        model.addAttribute("cityselection", new CitySelection());
+        CitySelection attributeValue = new CitySelection();
+        attributeValue.setCity("New Zealand");
+        model.addAttribute("selected_location", attributeValue);
         model.addAttribute("events", EventService.getEventsTodayForCity(null));
         return "explore";
     }
@@ -24,10 +25,12 @@ public class ExploreController {
     //How to handle this better?
     @PostMapping(value = {"/", "/city/{city}"})
     public String redirectToExploreCity(@ModelAttribute CitySelection citySelection){
+        if("".equals(citySelection.getCity())){
+            return "redirect:/";
+        }
         return "redirect:/city/" + citySelection.getCity();
     }
 
-    //theres a problem, all nonempty paths match here
     @GetMapping("/city/{city}")
     public String exploreCity(Model model, @PathVariable("city")  String location){
         //How to handle this situation better?
@@ -39,10 +42,8 @@ public class ExploreController {
                 .findFirst()
                 .orElse(null);
 
-//        model.addAttribute("name", "Not Ian");
-        model.addAttribute("user_city", city);
+        model.addAttribute("selected_location", selection);
         model.addAttribute("cities", CityRepository.getAllCities());
-        model.addAttribute("cityselection", selection);
         model.addAttribute("events", EventService.getEventsTodayForCity(city));
         return "explore";
     }

@@ -6,33 +6,37 @@
 </head>
 <body>
     <div>
-        <h1>Explore what's happening!</h1>
+        <h1>Explore todays events!</h1>
         <!--Why does the below now show up when null?-->
         <!--<h1 th:text="${user_city}"></h1>-->
     </div>
     <div>
         <!--<p th:text="${name}"></p>-->
         <!-- Form finds bean cityselection and will update field city based on input -->
-        <form method="post" th:object="${cityselection}">
+        <form method="post" th:object="${selected_location}">
             <label for="citySelector">Select your city:</label>
             <select id="citySelector" th:field="*{city}">
+                <option value="" selected>--Select one--</option>
                 <option th:each="city : ${cities}" th:value="${city.name}" th:text="${city.name}"></option>
             </select>
             <input type="submit">
         </form>
     </div>
     <br/>
+    <h2 th:text="${selected_location.city}"></h2>
     <div>
         <table>
             <thead>
                 <tr>
                     <th>Name</th>
+                    <th>id</th>
                     <th>Description</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="event : ${events}">
                     <td><p th:text="${event.name}"></p></td>
+                    <td><p th:text="${event.id}"></p></td>
                     <td><p th:text="${event.description}"></p></td>
                     <td></td>
                 </tr>
