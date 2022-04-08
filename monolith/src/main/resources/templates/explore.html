@@ -7,7 +7,8 @@
 <body>
     <div>
         <h1>Explore what's happening!</h1>
-        <h1 th:text="${user_city}"></h1>
+        <!--Why does the below now show up when null?-->
+        <!--<h1 th:text="${user_city}"></h1>-->
     </div>
     <div>
         <!--<p th:text="${name}"></p>-->
@@ -15,10 +16,27 @@
         <form method="post" th:object="${cityselection}">
             <label for="citySelector">Select your city:</label>
             <select id="citySelector" th:field="*{city}">
-                <option th:each="city : ${cities}" th:value="${city}" th:text="${city}"></option>
+                <option th:each="city : ${cities}" th:value="${city.name}" th:text="${city.name}"></option>
             </select>
             <input type="submit">
         </form>
+    </div>
+    <br/>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="event : ${events}">
+                    <td><p th:text="${event.name}"></p></td>
+                    <td><p th:text="${event.description}"></p></td>
+                    <td></td>
+                </tr>
+            </tbody>
     </div>
 </body>
 </html>

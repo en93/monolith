@@ -1,4 +1,4 @@
-package com.ian.monolith.form;
+package com.ian.monolith.models;
 
 public class CitySelection {
 
