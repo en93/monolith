@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ian.monolith.models.City;
+import com.ian.monolith.models.Event;
 import com.ian.monolith.models.EventList;
 import com.ian.monolith.models.EventListing;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +23,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@PropertySource(value = { "classpath:application.properties" })
-public class EventService implements EnvironmentAware {
+public class EventService {
 
-    @Autowired
-    private static Environment env;
-
-    @Override
-    public void setEnvironment(Environment environment) {
-        env = environment;
-    }
+//    @Autowired
+//    private static Environment env;
+//
+//    @Override
+//    public void setEnvironment(Environment environment) {
+//        env = environment;
+//    }
 
     //todo timezones
     //Need to add time componenet
@@ -63,11 +63,48 @@ public class EventService implements EnvironmentAware {
         }
         JsonNode events = root.path("events");
 
+        //Would be easier via strings
         List<EventListing> eventListings = new ArrayList<>();
         events.iterator()
                 .forEachRemaining(event -> eventListings.add(mapper.convertValue(event, EventListing.class)));
 
         return eventListings;
+    }
+
+    public static Event getEventById(String id){
+
+        RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication("testingmicroserviceseventfinda", "89kp6wbwjq7p").build();
+        String url = "https://api.eventfinda.co.nz/v2/events.json?id=" + id;
+        ResponseEntity<String> forEntity = restTemplate.getForEntity(url, String.class);
+
+        //Get rid of repeated boilerplate
+        String body = forEntity.getBody();
+        ObjectMapper mapper = new ObjectMapper();
+//        mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+        JsonNode root;
+        try {
+            root = mapper.readTree(body);
+        } catch (JsonProcessingException e){
+            return null;
+        }
+        //Feeling lazy
+        JsonNode events = root.path("events");
+        events = events.path(0);
+
+        Event event = new Event();
+        event.id = events.path("id").asText();
+        event.name = events.path("name").asText();
+        event.description = events.path("description").asText();
+        event.start = events.path("datetime_start").asText();
+        event.end = events.path("datetime_end").asText();
+        event.location = events.path("location_summary").asText();
+        event.address = events.path("address").asText();
+        event.isFree = events.path("is_free").asBoolean();
+        event.isCancelled = events.path("is_cancelled").asBoolean();
+        event.restrictions = events.path("restrictions").asText();
+
+        return event;
+
     }
 
 }

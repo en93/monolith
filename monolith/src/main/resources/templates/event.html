@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>An event</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-</head>
-<body>
-<div>
-    <p th:text="${event.name}"/>
-    <p th:text="${event.description}"/>
-    <p th:text="${event.start}"/>
-    <p th:text="${event.finish}"/>
-</div>
-</body>
+    <head>
+        <title>An event</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link th:href="@{/main.css}" rel="stylesheet" />
+    </head>
+    <body>
+        <div>
+            <div class="wrapper">
+
+                <div class="header">
+                    <h1>NearMe</h1>
+                </div>
+
+                <div class="event_info">
+                    <h2 th:text="${event.name}"/>
+                    <p th:text="${event.description}"/>
+                    <p th:text="|Time: ${event.start} - ${event.end}|"/>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>
