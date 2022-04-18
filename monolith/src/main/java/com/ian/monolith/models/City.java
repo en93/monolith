@@ -3,6 +3,7 @@ package com.ian.monolith.models;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
+//todo separate doc types from data form data types
 @Document("city")
 public class City {
 

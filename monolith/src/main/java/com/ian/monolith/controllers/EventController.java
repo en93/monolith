@@ -2,6 +2,7 @@ package com.ian.monolith.controllers;
 
 import com.ian.monolith.models.Event;
 import com.ian.monolith.services.EventService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/event")
 public class EventController {
 
+    @Autowired
+    private EventService eventService;
+
     @GetMapping("/{id}")
     public String showEventPage(Model model, @PathVariable("id")  String id){
-        Event event = EventService.getEventById(id);
+        Event event = eventService.getEventById(id);
         model.addAttribute("event", event);
         return "event";
     }

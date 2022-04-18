@@ -6,7 +6,8 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 //todo test save
-public interface CityRespository extends MongoRepository<City, String> {
+
+public interface CityRepository extends MongoRepository<City, String> {
 
     //todo does this need annotations?
     City findCityById(String id);

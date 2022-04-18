@@ -6,14 +6,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ian.monolith.models.City;
 import com.ian.monolith.models.Event;
-import com.ian.monolith.models.EventList;
 import com.ian.monolith.models.EventListing;
+import com.ian.monolith.repositories.EventRepository;
+import jdk.nashorn.internal.runtime.options.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -22,8 +21,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+@Component
 public class EventService {
+
+    @Autowired
+    private EventRepository eventRepository;
 
     //Need to add pages
     public static List<EventListing> getEventsTodayForCity(City city) {
@@ -62,7 +66,16 @@ public class EventService {
         return eventListings;
     }
 
-    public static Event getEventById(String id){
+    public Event getEventById(String id){
+
+        //todo handle this more functionally
+        //Move to another method
+        Optional<Event> cached = eventRepository.findById(id);
+        //Todo add check for freshness of data
+        //idea, move cached time to a parent class and handle all checks there
+        if (cached.isPresent()){
+            return cached.get();
+        }
 
         RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication("testingmicroserviceseventfinda", "89kp6wbwjq7p").build();
         String url = "https://api.eventfinda.co.nz/v2/events.json?id=" + id;
@@ -71,7 +84,6 @@ public class EventService {
         //Get rid of repeated boilerplate
         String body = forEntity.getBody();
         ObjectMapper mapper = new ObjectMapper();
-//        mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
         JsonNode root;
         try {
             root = mapper.readTree(body);
@@ -93,7 +105,10 @@ public class EventService {
         event.setFree(events.path("is_free").asBoolean());
         event.setCancelled(events.path("is_cancelled").asBoolean());
         event.setRestrictions(events.path("restrictions").asText());
+        event.setCachedDateTime(LocalDateTime.now());
 
+        //Save to local cache and return value
+        eventRepository.save(event);
         return event;
 
     }

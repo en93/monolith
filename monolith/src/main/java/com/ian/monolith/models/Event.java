@@ -3,6 +3,8 @@ package com.ian.monolith.models;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
+import java.time.LocalDateTime;
+
 //todo Doesn't handle event sessions
 @Document("event")
 public class Event {
@@ -17,6 +19,16 @@ public class Event {
     private String address;
     private boolean isFree;
     private boolean isCancelled;
+    private LocalDateTime cachedDateTime;
+
+
+    public LocalDateTime getCachedDateTime() {
+        return cachedDateTime;
+    }
+
+    public void setCachedDateTime(LocalDateTime cachedDateTime) {
+        this.cachedDateTime = cachedDateTime;
+    }
 
     public String getId() {
         return id;
