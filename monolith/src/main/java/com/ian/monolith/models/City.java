@@ -1,20 +1,26 @@
 package com.ian.monolith.models;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.MongoId;
+
+@Document("city")
 public class City {
+
+    @MongoId
+    private String id;
+    private String name;
+
+
     public String getName() {
         return name;
     }
 
-    public int getCode() {
-        return code;
+    public String getId() {
+        return id;
     }
 
-    public String name;
-
-    public int code;
-
-    public City(String name, int code) {
+    public City(String name, String id) {
         this.name = name;
-        this.code = code;
+        this.id = id;
     }
 }

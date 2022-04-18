@@ -25,16 +25,7 @@ import java.util.List;
 
 public class EventService {
 
-//    @Autowired
-//    private static Environment env;
-//
-//    @Override
-//    public void setEnvironment(Environment environment) {
-//        env = environment;
-//    }
-
-    //todo timezones
-    //Need to add time componenet
+    //Need to add pages
     public static List<EventListing> getEventsTodayForCity(City city) {
 
         //Get NZ time
@@ -49,7 +40,7 @@ public class EventService {
             //All events
             url = "https://api.eventfinda.co.nz/v2/events.json?order=date&location=&end_date="+ formattedDate + " 23:59:59&fields=event:(id,name,description)";
         } else {
-            url = "https://api.eventfinda.co.nz/v2/events.json?order=date&location=" + city.code + "&end_date=" + formattedDate + " 23:59:59&fields=event:(id,name,description)";
+            url = "https://api.eventfinda.co.nz/v2/events.json?order=date&location=" + city.getId() + "&end_date=" + formattedDate + " 23:59:59&fields=event:(id,name,description)";
         }
         ResponseEntity<String> forEntity = restTemplate.getForEntity(url, String.class);
         String body = forEntity.getBody();
@@ -92,16 +83,16 @@ public class EventService {
         events = events.path(0);
 
         Event event = new Event();
-        event.id = events.path("id").asText();
-        event.name = events.path("name").asText();
-        event.description = events.path("description").asText();
-        event.start = events.path("datetime_start").asText();
-        event.end = events.path("datetime_end").asText();
-        event.location = events.path("location_summary").asText();
-        event.address = events.path("address").asText();
-        event.isFree = events.path("is_free").asBoolean();
-        event.isCancelled = events.path("is_cancelled").asBoolean();
-        event.restrictions = events.path("restrictions").asText();
+        event.setId(events.path("id").asText());
+        event.setName(events.path("name").asText());
+        event.setDescription(events.path("description").asText());
+        event.setStart(events.path("datetime_start").asText());
+        event.setEnd(events.path("datetime_end").asText());
+        event.setLocation(events.path("location_summary").asText());
+        event.setAddress(events.path("address").asText());
+        event.setFree(events.path("is_free").asBoolean());
+        event.setCancelled(events.path("is_cancelled").asBoolean());
+        event.setRestrictions(events.path("restrictions").asText());
 
         return event;
 
