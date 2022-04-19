@@ -13,3 +13,23 @@ public class MonolithApplication {
 	}
 
 }
+
+/*
+TODO
+
+pagination of results
+Batch to clear cache
+add gps awareness
+split into microservices
+create proxy rest server to handle eventfinda api
+mobile responsive
+More pages
+Better event html
+Docker
+Refactor code
+update unit tests
+better externalize connections and env details
+bootstrap css
+put in aws
+
+ */

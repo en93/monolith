@@ -8,7 +8,6 @@ import com.ian.monolith.models.City;
 import com.ian.monolith.models.Event;
 import com.ian.monolith.models.EventListing;
 import com.ian.monolith.repositories.EventRepository;
-import jdk.nashorn.internal.runtime.options.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +25,10 @@ import java.util.Optional;
 
 @Component
 public class EventService {
+
+    private static final ZoneId NZ_TIME_ZONE = ZoneId.of("GMT+12:00");
+
+    private static final int CACHED_MINTUES = 3;
 
     @Autowired
     private EventRepository eventRepository;
@@ -34,7 +38,7 @@ public class EventService {
 
         //Get NZ time
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d");
-        String formattedDate = LocalDateTime.now(ZoneId.of("GMT+12:00")).format(formatter);
+        String formattedDate = LocalDateTime.now(NZ_TIME_ZONE).format(formatter);
 
         //TODO REMOVE BEFORE COMMITING
         RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication("", "").build();
@@ -68,13 +72,19 @@ public class EventService {
 
     public Event getEventById(String id){
 
-        //todo handle this more functionally
-        //Move to another method
+        //todo handle this as an optional and functionally
         Optional<Event> cached = eventRepository.findById(id);
-        //Todo add check for freshness of data
-        //idea, move cached time to a parent class and handle all checks there
+        //todo move cached time to a parent class and handle all checks there
         if (cached.isPresent()){
-            return cached.get();
+            Event event = cached.get();
+            long minutes = ChronoUnit.MINUTES.between(event.getCachedDateTime(), LocalDateTime.now(NZ_TIME_ZONE));
+
+            if (minutes > CACHED_MINTUES){
+                return event;
+            } else {
+                //todo consider moving to end or in event of failure to retreive
+                eventRepository.delete(event);
+            }
         }
 
         RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication("testingmicroserviceseventfinda", "89kp6wbwjq7p").build();
