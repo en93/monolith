@@ -58,7 +58,7 @@ public class EventService {
         try {
             root = mapper.readTree(body);
         } catch (JsonProcessingException e){
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         JsonNode events = root.path("events");
 

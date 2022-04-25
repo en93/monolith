@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.LocalDateTime;
 
-//todo Doesn't handle event sessions
+//todo Add event session support
 @Document("event")
 public class Event {
 

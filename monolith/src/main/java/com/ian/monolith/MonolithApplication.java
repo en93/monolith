@@ -31,5 +31,6 @@ update unit tests
 better externalize connections and env details
 bootstrap css
 put in aws
+integrate sonar analysis
 
  */
