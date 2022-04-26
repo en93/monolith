@@ -1,6 +1,6 @@
 package com.ian.monolith.models;
 
-//todo rename with something more descriptive
+//todo remove and repurpose City model for this
 public class CitySelection {
 
     public String city;

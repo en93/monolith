@@ -28,13 +28,13 @@ public class EventService {
 
     private static final ZoneId NZ_TIME_ZONE = ZoneId.of("GMT+12:00");
 
-    private static final int CACHED_MINTUES = 3;
+    private static final int CACHED_MINUTES = 3;
 
     @Autowired
     private EventRepository eventRepository;
 
     //Need to add pages
-    public static List<EventListing> getEventsTodayForCity(City city) {
+    public List<EventListing> getEventsTodayForCity(City city) {
 
         //Get NZ time
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d");
@@ -79,10 +79,10 @@ public class EventService {
             Event event = cached.get();
             long minutes = ChronoUnit.MINUTES.between(event.getCachedDateTime(), LocalDateTime.now(NZ_TIME_ZONE));
 
-            if (minutes > CACHED_MINTUES){
+            if (minutes > CACHED_MINUTES){
                 return event;
             } else {
-                //todo consider moving to end or in event of failure to retreive
+                //todo consider moving to end or in event of failure to retrieve
                 eventRepository.delete(event);
             }
         }

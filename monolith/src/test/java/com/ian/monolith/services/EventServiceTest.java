@@ -16,7 +16,8 @@ public class EventServiceTest {
     @Test
     public void getAucklandEventPreviews(){
         City city = new City("Wellington Region", "11");
-        List<EventListing> aucklandEventPreviews = EventService.getEventsTodayForCity(city);
+        EventService eventService = new EventService();
+        List<EventListing> aucklandEventPreviews = eventService.getEventsTodayForCity(city);
     }
 
     @Test

@@ -28,9 +28,10 @@ public class ExploreController {
 
         //todo Move city repo accesses to a service
         model.addAttribute("cities", cityRepository.findAll());
-        CitySelection attributeValue = new CitySelection();
-        attributeValue.setCity("New Zealand");
-        model.addAttribute("selected_location", attributeValue);
+        CitySelection selection = new CitySelection();
+        selection.setCity("New Zealand");
+
+        model.addAttribute("selected_location", selection);
         model.addAttribute("events", eventService.getEventsTodayForCity(null));
         return "explore";
     }
