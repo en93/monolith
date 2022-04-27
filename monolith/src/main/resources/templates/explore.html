@@ -17,7 +17,7 @@
                 <!-- Form finds bean cityselection and will update field city based on input -->
                 <form method="post" th:object="${selected_location}">
                     <label for="citySelector">Select your city:</label>
-                    <select id="citySelector" th:field="*{city}">
+                    <select id="citySelector" th:field="*{name}">
                         <option value="" selected>--Select one--</option>
                         <option th:each="city : ${cities}" th:value="${city.name}" th:text="${city.name}"></option>
                     </select>
@@ -25,7 +25,7 @@
                 </form>
             </div>
             <br/>
-            <h2 th:text="${selected_location.city}"></h2>
+            <h2 th:text="${selected_location.name}"></h2>
 
             <div class="event_list">
                 <table>

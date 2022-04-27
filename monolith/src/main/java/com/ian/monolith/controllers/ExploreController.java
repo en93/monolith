@@ -2,7 +2,7 @@ package com.ian.monolith.controllers;
 
 import com.ian.monolith.CityRepositoryOLD;
 import com.ian.monolith.models.City;
-import com.ian.monolith.models.CitySelection;
+//import com.ian.monolith.models.CitySelection;
 import com.ian.monolith.repositories.CityRepository;
 import com.ian.monolith.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +28,8 @@ public class ExploreController {
 
         //todo Move city repo accesses to a service
         model.addAttribute("cities", cityRepository.findAll());
-        CitySelection selection = new CitySelection();
-        selection.setCity("New Zealand");
+        City selection = new City();
+        selection.setName("New Zealand");
 
         model.addAttribute("selected_location", selection);
         model.addAttribute("events", eventService.getEventsTodayForCity(null));
@@ -38,18 +38,18 @@ public class ExploreController {
 
     //How to handle this better?
     @PostMapping(value = {"/", "/city/{city}"})
-    public String redirectToExploreCity(@ModelAttribute CitySelection citySelection){
-        if("".equals(citySelection.getCity())){
+    public String redirectToExploreCity(@ModelAttribute City citySelection){
+        if("".equals(citySelection.getName())){
             return "redirect:/";
         }
-        return "redirect:/city/" + citySelection.getCity();
+        return "redirect:/city/" + citySelection.getName();
     }
 
     @GetMapping("/city/{city}")
     public String exploreCity(Model model, @PathVariable("city")  String location){
         //How to handle this situation better?
-        CitySelection selection = new CitySelection();
-        selection.setCity(location);
+        City selection = new City();
+        selection.setName(location);
         //Handle null case better
         City city = CityRepositoryOLD.getAllCities().stream()
                 .filter( x -> location.equals(x.getName()))
