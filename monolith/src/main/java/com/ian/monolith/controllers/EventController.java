@@ -16,8 +16,8 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
-    @GetMapping("/{id}")
-    public String showEventPage(Model model, @PathVariable("id")  String id){
+    @GetMapping("/{event_id}")
+    public String showEventPage(Model model, @PathVariable("event_id")  String id){
         Event event = eventService.getEventById(id);
         model.addAttribute("event", event);
         return "event";

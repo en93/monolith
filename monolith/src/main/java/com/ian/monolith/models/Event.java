@@ -1,17 +1,29 @@
 package com.ian.monolith.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.LocalDateTime;
 
 //todo Add event session support
+
+/***
+ * Stores information on listed events
+ * Used to store previews of events from JSON and to hold information from the event page.
+ *
+ */
+@JsonSerialize
 @Document("event")
 public class Event {
 
     @MongoId
+    @JsonProperty("id")
     private String id;
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("description")
     private String description;
     private String start;
     private String end;

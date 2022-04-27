@@ -8,36 +8,35 @@
     <body>
         <div class="wrapper">
 
+            <!-- Show page header-->
             <div class="header">
                 <h1>NearMe</h1>
                 <h2>Explore todays events!</h2>
             </div>
 
+            <!-- Form for selecting city -->
             <div class="city_selector">
-                <!-- Form finds bean cityselection and will update field city based on input -->
+                <!-- Form finds attribute selected_location -->
                 <form method="post" th:object="${selected_location}">
                     <label for="citySelector">Select your city:</label>
+                    <!-- Update name field based on selection -->
                     <select id="citySelector" th:field="*{name}">
                         <option value="" selected>--Select one--</option>
-                        <option th:each="city : ${cities}" th:value="${city.name}" th:text="${city.name}"></option>
+                        <option th:each="city : ${all_cities}" th:value="${city.name}" th:text="${city.name}"></option>
                     </select>
                     <input type="submit">
                 </form>
             </div>
             <br/>
-            <h2 th:text="${selected_location.name}"></h2>
 
+            <!-- Display location of events being shown-->
+            <h2 th:text="${selected_location.name!= null} ? ${selected_location.name} : 'New Zealand'"></h2>
+
+            <!-- Show events for location-->
             <div class="event_list">
                 <table>
-    <!--                <thead>
-                        <tr>
-                            <th>Name</th>
-                            &lt;!&ndash;<th>id</th>&ndash;&gt;
-                            <th>Description</th>
-                        </tr>
-                    </thead>-->
                     <tbody>
-                        <tr th:each="event : ${events}">
+                        <tr th:each="event : ${todays_events}">
                             <td><a th:href="@{/event/{id}(id=${event.id})}"><p th:text="${event.name}"></p></a></td>
                             <td><p th:text="${event.description}"></p></td>
                         </tr>
@@ -45,10 +44,10 @@
                 </table>
             </div>
 
+            <!-- Show pagination -->
             <div class="page_navigation">
 
             </div>
-
         </div>
     </body>
 </html>

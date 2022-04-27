@@ -15,8 +15,6 @@ public class MonolithApplication {
 }
 
 /*
-TODO
-
 pagination of results
 Batch to clear cache
 add gps awareness
@@ -32,5 +30,4 @@ better externalize connections and env details
 bootstrap css
 put in aws
 integrate sonar analysis
-
  */

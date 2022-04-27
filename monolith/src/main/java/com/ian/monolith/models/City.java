@@ -3,19 +3,17 @@ package com.ian.monolith.models;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
-//todo separate doc types from data form data types
+/***
+ * Stores information on cities we cover
+ */
 @Document("city")
 public class City {
 
     @MongoId
-    public String id;
-    public String name;
+    private String id;
+    private String name;
 
     public City() {    }
-
-    public City(String name) {
-        this.name = name;
-    }
 
     public City(String name, String id) {
         this.name = name;

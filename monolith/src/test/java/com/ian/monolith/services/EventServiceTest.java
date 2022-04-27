@@ -1,10 +1,8 @@
 package com.ian.monolith.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ian.monolith.models.City;
-import com.ian.monolith.models.EventListing;
+import com.ian.monolith.models.Event;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -17,7 +15,7 @@ public class EventServiceTest {
     public void getAucklandEventPreviews(){
         City city = new City("Wellington Region", "11");
         EventService eventService = new EventService();
-        List<EventListing> aucklandEventPreviews = eventService.getEventsTodayForCity(city);
+        List<Event> aucklandEventPreviews = eventService.getEventsTodayForCity(city);
     }
 
     @Test

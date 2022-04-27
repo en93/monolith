@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ian.monolith.models.City;
 import com.ian.monolith.models.Event;
-import com.ian.monolith.models.EventListing;
 import com.ian.monolith.repositories.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -34,7 +33,7 @@ public class EventService {
     private EventRepository eventRepository;
 
     //Need to add pages
-    public List<EventListing> getEventsTodayForCity(City city) {
+    public List<Event> getEventsTodayForCity(City city) {
 
         //Get NZ time
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d");
@@ -63,9 +62,9 @@ public class EventService {
         JsonNode events = root.path("events");
 
         //Would be easier via strings
-        List<EventListing> eventListings = new ArrayList<>();
+        List<Event> eventListings = new ArrayList<>();
         events.iterator()
-                .forEachRemaining(event -> eventListings.add(mapper.convertValue(event, EventListing.class)));
+                .forEachRemaining(event -> eventListings.add(mapper.convertValue(event, Event.class)));
 
         return eventListings;
     }
