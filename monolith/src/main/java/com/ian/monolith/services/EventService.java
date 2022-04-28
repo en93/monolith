@@ -13,113 +13,118 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Component
 public class EventService {
 
-    private static final ZoneId NZ_TIME_ZONE = ZoneId.of("GMT+12:00");
-
-    private static final int CACHED_MINUTES = 3;
-
     @Autowired
     private EventRepository eventRepository;
+
+    private static final int MAX_CACHED_MINUTES = 3;
 
     //Need to add pages
     public List<Event> getEventsTodayForCity(City city) {
 
-        //Get NZ time
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d");
-        String formattedDate = LocalDateTime.now(NZ_TIME_ZONE).format(formatter);
+        String formattedDate = ServiceUtils.getFormattedDate();
+        String url = buildUrl(city, formattedDate);
 
-        //TODO REMOVE BEFORE COMMITING
-        RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication("", "").build();
-        String url;
-        //Tidy this up
-        if (city == null){
-            //All events
-            url = "https://api.eventfinda.co.nz/v2/events.json?order=date&location=&end_date="+ formattedDate + " 23:59:59&fields=event:(id,name,description)";
-        } else {
-            url = "https://api.eventfinda.co.nz/v2/events.json?order=date&location=" + city.getId() + "&end_date=" + formattedDate + " 23:59:59&fields=event:(id,name,description)";
-        }
-        ResponseEntity<String> forEntity = restTemplate.getForEntity(url, String.class);
-        String body = forEntity.getBody();
+        //Build rest template and call API
+        RestTemplate restTemplate = new RestTemplateBuilder()
+                .basicAuthentication("", "").build();
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+        List<Event> events = getEventListFromResponse(responseEntity);
+        return events;
+    }
+    
+    private List<Event> getEventListFromResponse(ResponseEntity<String> responseEntity) {
+        String responseBody = responseEntity.getBody();
+
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
         JsonNode root;
         try {
-            root = mapper.readTree(body);
+            root = mapper.readTree(responseBody);
         } catch (JsonProcessingException e){
             return Collections.emptyList();
         }
-        JsonNode events = root.path("events");
+        JsonNode eventsNode = root.path("events");
+        
+        return getEventListFromNode(mapper, eventsNode);
+    }
 
-        //Would be easier via strings
-        List<Event> eventListings = new ArrayList<>();
-        events.iterator()
-                .forEachRemaining(event -> eventListings.add(mapper.convertValue(event, Event.class)));
+    private List<Event> getEventListFromNode(ObjectMapper mapper, JsonNode eventsNode) {
+        return StreamSupport
+                .stream(eventsNode.spliterator(), false)
+                .map(event -> mapper.convertValue(event, Event.class))
+                .collect(Collectors.toList());
+    }
 
-        return eventListings;
+    private String buildUrl(City city, String formattedDate) {
+        if (city == null) {
+            //Show all events
+            return  "https://api.eventfinda.co.nz/v2/events.json?order=date&location=&end_date="
+                    + formattedDate + " 23:59:59&fields=event:(id,name,description)";
+        }
+        //Show city specific events
+        return  "https://api.eventfinda.co.nz/v2/events.json?order=date&location=" + city.getId()
+                + "&end_date=" + formattedDate + " 23:59:59&fields=event:(id,name,description)";
+
     }
 
     public Event getEventById(String id){
 
-        //todo handle this as an optional and functionally
-        Optional<Event> cached = eventRepository.findById(id);
-        //todo move cached time to a parent class and handle all checks there
-        if (cached.isPresent()){
-            Event event = cached.get();
-            long minutes = ChronoUnit.MINUTES.between(event.getCachedDateTime(), LocalDateTime.now(NZ_TIME_ZONE));
-
-            if (minutes > CACHED_MINUTES){
-                return event;
-            } else {
-                //todo consider moving to end or in event of failure to retrieve
-                eventRepository.delete(event);
-            }
+        Event cachedEvent = getCachedEvent(id);
+        if (cachedEvent != null) {
+            return cachedEvent;
         }
 
-        RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication("testingmicroserviceseventfinda", "89kp6wbwjq7p").build();
-        String url = "https://api.eventfinda.co.nz/v2/events.json?id=" + id;
+        //Build rest template and call API
+        RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication(
+                "", "").build();
+        String url = "https://api.eventfinda.co.nz/v2/events.json?id=" + id
+                + "&fields=event:(id,name,description,datetime_start,datetime_end,location_summary,address,is_free,is_cancelled,restrictions)";
         ResponseEntity<String> forEntity = restTemplate.getForEntity(url, String.class);
+        Event event = getEventFromResponse(forEntity);
+        return event;
+    }
 
-        //Get rid of repeated boilerplate
-        String body = forEntity.getBody();
+    private Event getEventFromResponse(ResponseEntity<String> forEntity) {
+
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root;
         try {
-            root = mapper.readTree(body);
+            root = mapper.readTree(forEntity.getBody());
         } catch (JsonProcessingException e){
             return null;
         }
-        //Feeling lazy
-        JsonNode events = root.path("events");
-        events = events.path(0);
 
-        Event event = new Event();
-        event.setId(events.path("id").asText());
-        event.setName(events.path("name").asText());
-        event.setDescription(events.path("description").asText());
-        event.setStart(events.path("datetime_start").asText());
-        event.setEnd(events.path("datetime_end").asText());
-        event.setLocation(events.path("location_summary").asText());
-        event.setAddress(events.path("address").asText());
-        event.setFree(events.path("is_free").asBoolean());
-        event.setCancelled(events.path("is_cancelled").asBoolean());
-        event.setRestrictions(events.path("restrictions").asText());
-        event.setCachedDateTime(LocalDateTime.now());
+        List<Event> eventsList = getEventListFromNode(mapper, root.path("events"));
+        Event event = eventsList.get(0);
 
-        //Save to local cache and return value
+        //Cache and return value
         eventRepository.save(event);
         return event;
+    }
 
+    private Event getCachedEvent(String id) {
+        Optional<Event> cached = eventRepository.findById(id);
+        if (cached.isPresent()){
+            Event event = cached.get();
+            long cachedTime = ChronoUnit.MINUTES.between(event.getCachedDateTime(), ServiceUtils.getLocalTime());
+
+            if (cachedTime > MAX_CACHED_MINUTES){
+                return event;
+            } else {
+                eventRepository.delete(event);
+            }
+        }
+        return null;
     }
 
 }

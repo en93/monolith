@@ -2,18 +2,13 @@ package com.ian.monolith.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.ian.monolith.services.ServiceUtils;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.LocalDateTime;
 
 //todo Add event session support
-
-/***
- * Stores information on listed events
- * Used to store previews of events from JSON and to hold information from the event page.
- *
- */
 @JsonSerialize
 @Document("event")
 public class Event {
@@ -25,14 +20,25 @@ public class Event {
     private String name;
     @JsonProperty("description")
     private String description;
+    @JsonProperty("datetime_start")
     private String start;
+    @JsonProperty("datetime_end")
     private String end;
+    @JsonProperty("location_summary")
     private String location;
+    @JsonProperty("address")
     private String address;
+    @JsonProperty("is_free")
     private boolean isFree;
+    @JsonProperty("is_cancelled")
     private boolean isCancelled;
+    @JsonProperty("restrictions")
+    private String restrictions;
     private LocalDateTime cachedDateTime;
 
+    public Event(){
+        this.cachedDateTime = ServiceUtils.getLocalTime();
+    }
 
     public LocalDateTime getCachedDateTime() {
         return cachedDateTime;
@@ -121,7 +127,4 @@ public class Event {
     public void setRestrictions(String restrictions) {
         this.restrictions = restrictions;
     }
-
-    public String restrictions;
-
 }

@@ -3,9 +3,6 @@ package com.ian.monolith.models;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
-/***
- * Stores information on cities we cover
- */
 @Document("city")
 public class City {
 
@@ -13,7 +10,8 @@ public class City {
     private String id;
     private String name;
 
-    public City() {    }
+    public City() {
+    }
 
     public City(String name, String id) {
         this.name = name;
