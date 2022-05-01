@@ -28,8 +28,6 @@ public class ExploreController {
 
     @GetMapping
     public String explore(Model model){
-        // cityRepository.saveAll(CityRepositoryOLD.getAllCities());
-
         List<City> cities = cityRepository.findAll();
         List<Event> events = eventService.getEventsTodayForCity(null);
 

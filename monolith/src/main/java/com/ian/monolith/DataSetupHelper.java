@@ -5,7 +5,7 @@ import com.ian.monolith.models.City;
 import java.util.Arrays;
 import java.util.List;
 
-public class CityRepositoryOLD {
+public class DataSetupHelper {
     public static List<City> getAllCities(){
         return Arrays.asList(new City("Feilding and District", "30779"), new City("Virtual", "34045"),
                 new City("Northland", "1"), new City("Auckland", "2"),

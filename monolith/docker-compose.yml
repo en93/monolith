@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  mongo:
+    image: "mongo:latest"
+    ports:
+      - "27017:27017"
+    networks:
+      - test-network
+  monolith:
+    image: "en93/monolith"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "mongo"
+    networks:
+      - test-network
+networks:
+  test-network:
+    driver: bridge

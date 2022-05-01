@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.ian</groupId>
 	<artifactId>monolith</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>monolith</name>
 	<description>MVC design with calls to eventfinda API</description>
 	<properties>
@@ -41,13 +41,28 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.mockito</groupId>-->
+<!--			<artifactId>mockito-core</artifactId>-->
+<!--			<version>2.0.42-beta</version>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.powermock</groupId>-->
+<!--			<artifactId>powermock-module-junit4</artifactId>-->
+<!--			<version>1.6.5</version>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.powermock</groupId>-->
+<!--			<artifactId>powermock-api-mockito</artifactId>-->
+<!--			<version>1.6.5</version>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
+
 
 	</dependencies>
 
